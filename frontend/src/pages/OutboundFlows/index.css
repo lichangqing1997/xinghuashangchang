@@ -1,0 +1,11 @@
+.outbound-flows-page {
+  padding: 0;
+}
+
+.outbound-flows-page .ant-card {
+  border-radius: 8px;
+}
+
+.outbound-flows-page .ant-table {
+  border-radius: 8px;
+}

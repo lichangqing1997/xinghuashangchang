@@ -1,0 +1,44 @@
+.profile-page {
+  padding: 0;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-header-info h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+}
+
+.profile-avatar-wrapper {
+  cursor: pointer;
+}
+
+.profile-avatar-edit {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profile-avatar-edit:hover .profile-avatar-overlay {
+  opacity: 1;
+}

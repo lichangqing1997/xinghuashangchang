@@ -1,0 +1,15 @@
+.pda-page {
+  padding: 0;
+}
+
+.pda-page .ant-card {
+  border-radius: 8px;
+}
+
+.pda-page .ant-tabs-tab {
+  padding: 12px 16px;
+}
+
+.pda-page .ant-form-item-label {
+  font-weight: 500;
+}

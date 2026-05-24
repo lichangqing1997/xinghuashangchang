@@ -1,0 +1,11 @@
+.roles-page {
+  padding: 0;
+}
+
+.roles-page .ant-card {
+  border-radius: 8px;
+}
+
+.roles-page .ant-table-wrapper {
+  margin-top: 0;
+}

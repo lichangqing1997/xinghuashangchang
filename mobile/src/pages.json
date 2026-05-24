@@ -1,0 +1,72 @@
+{
+  "pages": [
+    {
+      "path": "pages/login/index",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "兴华商城"
+      }
+    },
+    {
+      "path": "pages/pda/scan-in",
+      "style": {
+        "navigationBarTitleText": "扫码入库"
+      }
+    },
+    {
+      "path": "pages/pda/scan-out",
+      "style": {
+        "navigationBarTitleText": "扫码出库"
+      }
+    },
+    {
+      "path": "pages/pda/records",
+      "style": {
+        "navigationBarTitleText": "扫码记录"
+      }
+    },
+    {
+      "path": "pages/mine/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "兴华商城",
+    "navigationBarBackgroundColor": "#2979ff",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#2979ff",
+    "borderStyle": "white",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tab-home.png",
+        "selectedIconPath": "static/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/pda/scan-in",
+        "text": "扫码",
+        "iconPath": "static/tab-scan.png",
+        "selectedIconPath": "static/tab-scan-active.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "static/tab-mine.png",
+        "selectedIconPath": "static/tab-mine-active.png"
+      }
+    ]
+  }
+}

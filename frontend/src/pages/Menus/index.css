@@ -1,0 +1,26 @@
+.menus-page {
+  padding: 0;
+}
+
+.menus-page .ant-card {
+  border-radius: 8px;
+}
+
+.menus-page .ant-table-wrapper {
+  margin-top: 0;
+}
+
+.menus-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+}
+
+.menus-toolbar .ant-btn-sm {
+  font-size: 13px;
+}

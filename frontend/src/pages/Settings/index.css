@@ -1,0 +1,7 @@
+.settings-page {
+  padding: 0;
+}
+
+.settings-page .ant-divider-horizontal.ant-divider-with-text {
+  margin: 24px 0 16px;
+}

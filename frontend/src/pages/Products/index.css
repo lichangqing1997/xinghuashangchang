@@ -1,0 +1,11 @@
+.products-page {
+  padding: 0;
+}
+
+.products-page .ant-card {
+  border-radius: 8px;
+}
+
+.products-page .ant-table {
+  border-radius: 8px;
+}

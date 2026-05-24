@@ -1,0 +1,11 @@
+.users-page {
+  padding: 0;
+}
+
+.users-page .ant-card {
+  border-radius: 8px;
+}
+
+.users-page .ant-table-wrapper {
+  margin-top: 0;
+}

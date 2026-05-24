@@ -1,0 +1,35 @@
+.inventory-page {
+  padding: 0;
+}
+
+.inventory-page .ant-card {
+  border-radius: 8px;
+}
+
+.inventory-stats {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.stat-item {
+  font-size: 14px;
+}
+
+.stat-label {
+  color: #666;
+}
+
+.stat-value {
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.stat-available {
+  color: #52c41a;
+}
+
+.stat-locked {
+  color: #faad14;
+}

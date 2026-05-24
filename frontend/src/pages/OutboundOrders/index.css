@@ -1,0 +1,11 @@
+.outbound-orders-page {
+  padding: 0;
+}
+
+.outbound-orders-page .ant-card {
+  border-radius: 8px;
+}
+
+.outbound-orders-page .ant-table {
+  border-radius: 8px;
+}

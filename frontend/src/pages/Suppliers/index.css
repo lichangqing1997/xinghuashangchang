@@ -1,0 +1,7 @@
+.suppliers-page {
+  padding: 0;
+}
+
+.suppliers-page .ant-card {
+  border-radius: 8px;
+}
