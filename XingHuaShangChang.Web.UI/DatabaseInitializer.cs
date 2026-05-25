@@ -2,6 +2,9 @@ using SqlSugar;
 using XingHuaShangChang.Application.Entity;
 using XingHuaShangChang.Application.Services.FileService;
 using XingHuaShangChang.Application.Services.OutboundOrderService;
+using 调试日志 = XingHuaShangChang.Application.Entity.调试日志;
+using 接口日志 = XingHuaShangChang.Application.Entity.接口日志;
+using 操作日志 = XingHuaShangChang.Application.Entity.操作日志;
 
 namespace XingHuaShangChang.Web.UI;
 
@@ -31,7 +34,11 @@ public static class DatabaseInitializer
             typeof(OutboundOrderItem),
             typeof(OutboundFlow),
             typeof(Company),
-            typeof(CompanyDetail)
+            typeof(CompanyDetail),
+            typeof(Tenant),
+            typeof(调试日志),
+            typeof(接口日志),
+            typeof(操作日志)
         );
 
         SeedData(db);
@@ -131,6 +138,7 @@ public static class DatabaseInitializer
                 new Menu { Id = 11, ParentId = 5, MenuName = "角色管理", MenuCode = "role_manage", Path = "/system/roles", Icon = "SafetyOutlined", MenuType = 1, Permission = "role:view", SortOrder = 1, Status = 1, IsVisible = 1 },
                 new Menu { Id = 12, ParentId = 5, MenuName = "菜单管理", MenuCode = "menu_manage", Path = "/system/menus", Icon = "MenuOutlined", MenuType = 1, Permission = "menu:view", SortOrder = 2, Status = 1, IsVisible = 1 },
                 new Menu { Id = 22, ParentId = 5, MenuName = "文件管理", MenuCode = "file_manage", Path = "/system/files", Icon = "FileOutlined", MenuType = 1, Permission = "file:view", SortOrder = 3, Status = 1, IsVisible = 1 },
+                new Menu { Id = 34, ParentId = 5, MenuName = "租户管理", MenuCode = "tenant_manage", Path = "/system/tenants", Icon = "TeamOutlined", MenuType = 1, Permission = "tenant:view", SortOrder = 4, Status = 1, IsVisible = 1 },
 
                 // 按钮权限
                 new Menu { Id = 13, ParentId = 6, MenuName = "商品新增", MenuCode = "product_add", MenuType = 2, Permission = "product:add", SortOrder = 0, Status = 1, IsVisible = 1 },
@@ -152,7 +160,12 @@ public static class DatabaseInitializer
                 // 公司管理按钮权限
                 new Menu { Id = 31, ParentId = 30, MenuName = "公司新增", MenuCode = "company_add", MenuType = 2, Permission = "company:add", SortOrder = 0, Status = 1, IsVisible = 1 },
                 new Menu { Id = 32, ParentId = 30, MenuName = "公司编辑", MenuCode = "company_edit", MenuType = 2, Permission = "company:edit", SortOrder = 1, Status = 1, IsVisible = 1 },
-                new Menu { Id = 33, ParentId = 30, MenuName = "公司删除", MenuCode = "company_delete", MenuType = 2, Permission = "company:delete", SortOrder = 2, Status = 1, IsVisible = 1 }
+                new Menu { Id = 33, ParentId = 30, MenuName = "公司删除", MenuCode = "company_delete", MenuType = 2, Permission = "company:delete", SortOrder = 2, Status = 1, IsVisible = 1 },
+
+                // 租户管理按钮权限
+                new Menu { Id = 35, ParentId = 34, MenuName = "租户新增", MenuCode = "tenant_add", MenuType = 2, Permission = "tenant:add", SortOrder = 0, Status = 1, IsVisible = 1 },
+                new Menu { Id = 36, ParentId = 34, MenuName = "租户编辑", MenuCode = "tenant_edit", MenuType = 2, Permission = "tenant:edit", SortOrder = 1, Status = 1, IsVisible = 1 },
+                new Menu { Id = 37, ParentId = 34, MenuName = "租户删除", MenuCode = "tenant_delete", MenuType = 2, Permission = "tenant:delete", SortOrder = 2, Status = 1, IsVisible = 1 }
             };
             db.Insertable(menus).ExecuteCommand();
         }
@@ -273,6 +286,72 @@ public static class DatabaseInitializer
             }
         }
 
+        // 增量添加租户管理菜单（兼容已有数据）
+        if (db.Queryable<Menu>().Any() && !db.Queryable<Menu>().Where(m => m.MenuCode == "tenant_manage").Any())
+        {
+            var systemMenu = db.Queryable<Menu>().Where(m => m.MenuCode == "system").First();
+            if (systemMenu != null)
+            {
+                var tenantMenu = new Menu { ParentId = systemMenu.Id, MenuName = "租户管理", MenuCode = "tenant_manage", Path = "/system/tenants", Icon = "TeamOutlined", MenuType = 1, Permission = "tenant:view", SortOrder = 4, Status = 1, IsVisible = 1 };
+                var tenantMenuId = db.Insertable(tenantMenu).ExecuteReturnIdentity();
+
+                var buttonMenus = new List<Menu>
+                {
+                    new Menu { ParentId = tenantMenuId, MenuName = "租户新增", MenuCode = "tenant_add", MenuType = 2, Permission = "tenant:add", SortOrder = 0, Status = 1, IsVisible = 1 },
+                    new Menu { ParentId = tenantMenuId, MenuName = "租户编辑", MenuCode = "tenant_edit", MenuType = 2, Permission = "tenant:edit", SortOrder = 1, Status = 1, IsVisible = 1 },
+                    new Menu { ParentId = tenantMenuId, MenuName = "租户删除", MenuCode = "tenant_delete", MenuType = 2, Permission = "tenant:delete", SortOrder = 2, Status = 1, IsVisible = 1 }
+                };
+                db.Insertable(buttonMenus).ExecuteCommand();
+
+                // 为所有角色添加租户管理菜单权限
+                var allTenantMenuIds = new List<int> { tenantMenuId };
+                allTenantMenuIds.AddRange(db.Queryable<Menu>().Where(m => m.MenuCode.StartsWith("tenant_") && m.MenuType == 2).Select(m => m.Id).ToList());
+
+                var roles = db.Queryable<Role>().ToList();
+                var newRoleMenus = new List<RoleMenu>();
+                foreach (var role in roles)
+                {
+                    foreach (var menuId in allTenantMenuIds)
+                    {
+                        newRoleMenus.Add(new RoleMenu { RoleId = role.Id, MenuId = menuId, CreatedAt = DateTime.UtcNow });
+                    }
+                }
+                if (newRoleMenus.Any())
+                    db.Insertable(newRoleMenus).ExecuteCommand();
+            }
+        }
+
+        // 增量添加日志管理菜单（兼容已有数据）
+        if (db.Queryable<Menu>().Any() && !db.Queryable<Menu>().Where(m => m.MenuCode == "log_manage").Any())
+        {
+            var logDir = new Menu { MenuName = "日志管理", MenuCode = "log_manage", Path = "", Icon = "FileSearchOutlined", MenuType = 0, SortOrder = 11, Status = 1, IsVisible = 1 };
+            var logDirId = db.Insertable(logDir).ExecuteReturnIdentity();
+
+            var newMenus = new List<Menu>
+            {
+                new Menu { ParentId = logDirId, MenuName = "调试日志", MenuCode = "debug_log", Path = "/system/logs/debug", Icon = "BugOutlined", MenuType = 1, Permission = "log:debug", SortOrder = 0, Status = 1, IsVisible = 1 },
+                new Menu { ParentId = logDirId, MenuName = "接口日志", MenuCode = "api_log", Path = "/system/logs/api", Icon = "ApiOutlined", MenuType = 1, Permission = "log:api", SortOrder = 1, Status = 1, IsVisible = 1 },
+                new Menu { ParentId = logDirId, MenuName = "操作日志", MenuCode = "operation_log", Path = "/system/logs/operation", Icon = "AuditOutlined", MenuType = 1, Permission = "log:operation", SortOrder = 2, Status = 1, IsVisible = 1 }
+            };
+            db.Insertable(newMenus).ExecuteCommand();
+
+            // 为所有角色添加日志管理菜单权限
+            var allLogMenuIds = new List<int> { logDirId };
+            allLogMenuIds.AddRange(db.Queryable<Menu>().Where(m => m.MenuCode.EndsWith("_log") && m.MenuType == 1).Select(m => m.Id).ToList());
+
+            var roles = db.Queryable<Role>().ToList();
+            var newRoleMenus = new List<RoleMenu>();
+            foreach (var role in roles)
+            {
+                foreach (var menuId in allLogMenuIds)
+                {
+                    newRoleMenus.Add(new RoleMenu { RoleId = role.Id, MenuId = menuId, CreatedAt = DateTime.UtcNow });
+                }
+            }
+            if (newRoleMenus.Any())
+                db.Insertable(newRoleMenus).ExecuteCommand();
+        }
+
         // 初始化角色数据
         if (!db.Queryable<Role>().Any())
         {
@@ -316,20 +395,20 @@ public static class DatabaseInitializer
             var roleMenus = new List<RoleMenu>();
 
             // 超级管理员拥有所有菜单
-            for (int menuId = 1; menuId <= 33; menuId++)
+            for (int menuId = 1; menuId <= 41; menuId++)
             {
                 roleMenus.Add(new RoleMenu { RoleId = 1, MenuId = menuId, CreatedAt = DateTime.UtcNow });
             }
 
             // 仓库管理员拥有基础数据和库存管理权限
-            var warehouseMenuIds = new[] { 1, 2, 3, 4, 6, 7, 8, 9, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33 };
+            var warehouseMenuIds = new[] { 1, 2, 3, 4, 6, 7, 8, 9, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41 };
             foreach (var menuId in warehouseMenuIds)
             {
                 roleMenus.Add(new RoleMenu { RoleId = 2, MenuId = menuId, CreatedAt = DateTime.UtcNow });
             }
 
             // 操作员拥有基础查看和PDA操作权限
-            var operatorMenuIds = new[] { 1, 2, 3, 4, 6, 7, 8, 9, 23, 24, 29, 30 };
+            var operatorMenuIds = new[] { 1, 2, 3, 4, 6, 7, 8, 9, 23, 24, 29, 30, 34, 38, 39, 40, 41 };
             foreach (var menuId in operatorMenuIds)
             {
                 roleMenus.Add(new RoleMenu { RoleId = 3, MenuId = menuId, CreatedAt = DateTime.UtcNow });

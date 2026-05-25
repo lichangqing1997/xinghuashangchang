@@ -1,3 +1,5 @@
+using NLog;
+using NLog.Web;
 using SqlSugar;
 using XingHuaShangChang.Application.Services.ProductService;
 using XingHuaShangChang.Application.Services.PDA;
@@ -7,9 +9,16 @@ using XingHuaShangChang.Application.Services.MenuService;
 using XingHuaShangChang.Application.Services.FileService;
 using XingHuaShangChang.Application.Services.OutboundOrderService;
 using XingHuaShangChang.Application.Services.CompanyService;
+using XingHuaShangChang.Application.Services.TenantService;
+using XingHuaShangChang.Application.Services.LogService;
 using XingHuaShangChang.Web.UI;
+using XingHuaShangChang.Web.UI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 配置 NLog
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -69,6 +78,8 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IOutboundOrderService, OutboundOrderService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<ITenantService, TenantService>();
+builder.Services.AddScoped<ILogService, LogService>();
 
 builder.Services.AddHealthChecks();
 
@@ -95,6 +106,9 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// 添加接口日志中间件
+app.UseMiddleware<ApiLoggingMiddleware>();
 
 app.UseCors();
 

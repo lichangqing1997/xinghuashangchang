@@ -8,4 +8,6 @@ export * from './role';
 export * from './menu';
 export * from './outboundOrder';
 export * from './company';
+export * from './tenant';
+export * from './log';
 export { api, default as apiClient } from './client';

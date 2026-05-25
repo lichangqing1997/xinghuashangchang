@@ -498,3 +498,105 @@ export interface CompanyDetailInput {
   fieldName: string;
   fieldValue?: string;
 }
+
+// ===== 租户管理相关类型 =====
+
+// 租户
+export interface Tenant {
+  id: number;
+  tenantCode: string;
+  tenantName: string;
+  contactPerson?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  address?: string;
+  connectionString?: string;
+  databaseName?: string;
+  maxUsers: number;
+  expireAt?: string;
+  remark?: string;
+  status: number;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// 创建租户输入
+export interface CreateTenantInput {
+  tenantCode: string;
+  tenantName: string;
+  contactPerson?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  address?: string;
+  connectionString?: string;
+  databaseName?: string;
+  maxUsers?: number;
+  expireAt?: string;
+  remark?: string;
+}
+
+// 更新租户输入
+export interface UpdateTenantInput {
+  id: number;
+  tenantName: string;
+  contactPerson?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  address?: string;
+  connectionString?: string;
+  databaseName?: string;
+  maxUsers?: number;
+  expireAt?: string;
+  remark?: string;
+  status?: number;
+}
+
+// ===== 日志管理相关类型 =====
+
+// 调试日志
+export interface DebugLog {
+  id: number;
+  level: string;
+  logger?: string;
+  message: string;
+  exception?: string;
+  stackTrace?: string;
+  requestPath?: string;
+  operator?: string;
+  createdAt: string;
+}
+
+// 接口日志
+export interface ApiLog {
+  id: number;
+  method: string;
+  path: string;
+  queryString?: string;
+  requestBody?: string;
+  responseBody?: string;
+  statusCode: number;
+  elapsed: number;
+  ip?: string;
+  userAgent?: string;
+  operator?: string;
+  isSuccess: boolean;
+  createdAt: string;
+}
+
+// 操作日志
+export interface OperationLog {
+  id: number;
+  module: string;
+  action: string;
+  description?: string;
+  method?: string;
+  requestPath?: string;
+  requestParams?: string;
+  responseResult?: string;
+  operator?: string;
+  ip?: string;
+  isSuccess: boolean;
+  errorMessage?: string;
+  elapsed: number;
+  createdAt: string;
+}

@@ -13,8 +13,12 @@ import UsersPage from '../pages/Users';
 import RolesPage from '../pages/Roles';
 import MenusPage from '../pages/Menus';
 import FilesPage from '../pages/Files';
+import TenantsPage from '../pages/Tenants';
 import ProfilePage from '../pages/Profile';
 import SettingsPage from '../pages/Settings';
+import DebugLogsPage from '../pages/Logs/DebugLogs';
+import ApiLogsPage from '../pages/Logs/ApiLogs';
+import OperationLogsPage from '../pages/Logs/OperationLogs';
 
 // 路由守卫组件
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -86,6 +90,22 @@ export const router = createBrowserRouter([
       {
         path: 'system/files',
         element: <FilesPage />,
+      },
+      {
+        path: 'system/tenants',
+        element: <TenantsPage />,
+      },
+      {
+        path: 'system/logs/debug',
+        element: <DebugLogsPage />,
+      },
+      {
+        path: 'system/logs/api',
+        element: <ApiLogsPage />,
+      },
+      {
+        path: 'system/logs/operation',
+        element: <OperationLogsPage />,
       },
       {
         path: 'profile',
