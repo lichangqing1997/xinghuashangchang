@@ -600,3 +600,125 @@ export interface OperationLog {
   elapsed: number;
   createdAt: string;
 }
+
+// ===== 入库单管理相关类型 =====
+
+// 入库单
+export interface InboundOrder {
+  id: number;
+  orderNo: string;
+  supplierName?: string;
+  source?: string;
+  orderType?: string;
+  status: string;
+  creator?: string;
+  auditStatus: string;
+  auditor?: string;
+  auditTime?: string;
+  auditRemark?: string;
+  remark?: string;
+  createdAt: string;
+  updatedAt?: string;
+  completedAt?: string;
+}
+
+// 入库单明细
+export interface InboundOrderItem {
+  id: number;
+  inboundOrderId: number;
+  seqNo: number;
+  materialCode?: string;
+  materialName?: string;
+  purchaseQuantity: number;
+  batchNo?: string;
+  batch1?: string;
+  batch2?: string;
+  batch3?: string;
+  batch4?: string;
+  batch5?: string;
+  batch6?: string;
+  batch7?: string;
+  batch8?: string;
+  batch9?: string;
+  batch10?: string;
+  reserveRemark1?: string;
+  reserveRemark2?: string;
+  reserveRemark3?: string;
+  reserveRemark4?: string;
+  reserveRemark5?: string;
+  reserveRemark6?: string;
+  reserveRemark7?: string;
+  reserveRemark8?: string;
+  reserveRemark9?: string;
+  reserveRemark10?: string;
+  createdAt: string;
+}
+
+// 创建入库单输入
+export interface CreateInboundOrderInput {
+  supplierName?: string;
+  source?: string;
+  orderType?: string;
+  creator?: string;
+  remark?: string;
+  items: CreateInboundOrderItemInput[];
+}
+
+// 创建入库单明细输入
+export interface CreateInboundOrderItemInput {
+  seqNo: number;
+  materialCode?: string;
+  materialName?: string;
+  purchaseQuantity: number;
+  batchNo?: string;
+  batch1?: string;
+  batch2?: string;
+  batch3?: string;
+  batch4?: string;
+  batch5?: string;
+  batch6?: string;
+  batch7?: string;
+  batch8?: string;
+  batch9?: string;
+  batch10?: string;
+  reserveRemark1?: string;
+  reserveRemark2?: string;
+  reserveRemark3?: string;
+  reserveRemark4?: string;
+  reserveRemark5?: string;
+  reserveRemark6?: string;
+  reserveRemark7?: string;
+  reserveRemark8?: string;
+  reserveRemark9?: string;
+  reserveRemark10?: string;
+}
+
+// 更新入库单输入
+export interface UpdateInboundOrderInput {
+  id: number;
+  supplierName?: string;
+  source?: string;
+  orderType?: string;
+  creator?: string;
+  remark?: string;
+  items: CreateInboundOrderItemInput[];
+}
+
+// 入库单查询输入
+export interface InboundOrderQueryInput {
+  keyword?: string;
+  status?: string;
+  auditStatus?: string;
+  orderType?: string;
+  startDate?: string;
+  endDate?: string;
+  pageIndex?: number;
+  pageSize?: number;
+}
+
+// 入库单审核输入
+export interface AuditInboundOrderInput {
+  isApproved: boolean;
+  auditor?: string;
+  auditRemark?: string;
+}

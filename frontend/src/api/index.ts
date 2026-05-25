@@ -7,6 +7,7 @@ export * from './user';
 export * from './role';
 export * from './menu';
 export * from './outboundOrder';
+export * from './inboundOrder';
 export * from './company';
 export * from './tenant';
 export * from './log';

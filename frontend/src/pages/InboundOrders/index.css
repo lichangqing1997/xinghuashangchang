@@ -1,0 +1,11 @@
+.inbound-orders-page {
+  height: 100%;
+}
+
+.inbound-orders-page .ant-card {
+  height: 100%;
+}
+
+.inbound-orders-page .ant-table-wrapper {
+  overflow: auto;
+}

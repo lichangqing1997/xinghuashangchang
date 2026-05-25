@@ -33,6 +33,8 @@ public static class DatabaseInitializer
             typeof(OutboundOrder),
             typeof(OutboundOrderItem),
             typeof(OutboundFlow),
+            typeof(InboundOrder),
+            typeof(InboundOrderItem),
             typeof(Company),
             typeof(CompanyDetail),
             typeof(Tenant),
@@ -350,6 +352,64 @@ public static class DatabaseInitializer
             }
             if (newRoleMenus.Any())
                 db.Insertable(newRoleMenus).ExecuteCommand();
+        }
+
+        // 增量添加入库单管理菜单（兼容已有数据）
+        if (db.Queryable<Menu>().Any() && !db.Queryable<Menu>().Where(m => m.MenuCode == "inbound_order").Any())
+        {
+            // 创建"入库单管理"顶级目录
+            var inboundDir = new Menu { MenuName = "入库单管理", MenuCode = "inbound_manage", Path = "", Icon = "ImportOutlined", MenuType = 0, SortOrder = 4, Status = 1, IsVisible = 1 };
+            var dirId = db.Insertable(inboundDir).ExecuteReturnIdentity();
+
+            // 创建"入库单"子菜单
+            var inboundMenu = new Menu { ParentId = dirId, MenuName = "入库单", MenuCode = "inbound_order", Path = "/inbound-orders", Icon = "FileTextOutlined", MenuType = 1, Permission = "inbound:view", SortOrder = 0, Status = 1, IsVisible = 1 };
+            var inboundMenuId = db.Insertable(inboundMenu).ExecuteReturnIdentity();
+
+            // 创建按钮权限
+            var buttonMenus = new List<Menu>
+            {
+                new Menu { ParentId = inboundMenuId, MenuName = "入库单新增", MenuCode = "inbound_add", MenuType = 2, Permission = "inbound:add", SortOrder = 0, Status = 1, IsVisible = 1 },
+                new Menu { ParentId = inboundMenuId, MenuName = "入库单编辑", MenuCode = "inbound_edit", MenuType = 2, Permission = "inbound:edit", SortOrder = 1, Status = 1, IsVisible = 1 },
+                new Menu { ParentId = inboundMenuId, MenuName = "入库单删除", MenuCode = "inbound_delete", MenuType = 2, Permission = "inbound:delete", SortOrder = 2, Status = 1, IsVisible = 1 },
+                new Menu { ParentId = inboundMenuId, MenuName = "入库单审核", MenuCode = "inbound_audit", MenuType = 2, Permission = "inbound:audit", SortOrder = 3, Status = 1, IsVisible = 1 },
+                new Menu { ParentId = inboundMenuId, MenuName = "入库单状态变更", MenuCode = "inbound_status", MenuType = 2, Permission = "inbound:status", SortOrder = 4, Status = 1, IsVisible = 1 }
+            };
+            db.Insertable(buttonMenus).ExecuteCommand();
+
+            // 为所有角色添加入库单管理菜单权限
+            var allInboundMenuIds = new List<int> { dirId, inboundMenuId };
+            allInboundMenuIds.AddRange(db.Queryable<Menu>().Where(m => m.MenuCode.StartsWith("inbound_") && m.MenuType == 2).Select(m => m.Id).ToList());
+
+            var roles = db.Queryable<Role>().ToList();
+            var newRoleMenus = new List<RoleMenu>();
+            foreach (var role in roles)
+            {
+                foreach (var menuId in allInboundMenuIds)
+                {
+                    newRoleMenus.Add(new RoleMenu { RoleId = role.Id, MenuId = menuId, CreatedAt = DateTime.UtcNow });
+                }
+            }
+            if (newRoleMenus.Any())
+                db.Insertable(newRoleMenus).ExecuteCommand();
+        }
+
+        // 迁移：如果旧的"入库管理"菜单存在，更新为新结构
+        var oldInboundDir = db.Queryable<Menu>().Where(m => m.MenuCode == "inbound").First();
+        if (oldInboundDir != null)
+        {
+            // 更新顶级目录名称
+            oldInboundDir.MenuName = "入库单管理";
+            oldInboundDir.MenuCode = "inbound_manage";
+            db.Updateable(oldInboundDir).UpdateColumns(x => new { x.MenuName, x.MenuCode }).ExecuteCommandHasChangeAsync();
+
+            // 更新子菜单名称
+            var oldInboundMenu = db.Queryable<Menu>().Where(m => m.MenuCode == "inbound_order_manage").First();
+            if (oldInboundMenu != null)
+            {
+                oldInboundMenu.MenuName = "入库单";
+                oldInboundMenu.MenuCode = "inbound_order";
+                db.Updateable(oldInboundMenu).UpdateColumns(x => new { x.MenuName, x.MenuCode }).ExecuteCommandHasChangeAsync();
+            }
         }
 
         // 初始化角色数据

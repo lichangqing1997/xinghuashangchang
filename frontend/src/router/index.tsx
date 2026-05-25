@@ -9,6 +9,7 @@ import SuppliersPage from '../pages/Suppliers';
 import CompaniesPage from '../pages/Companies';
 import OutboundOrdersPage from '../pages/OutboundOrders';
 import OutboundFlowsPage from '../pages/OutboundFlows';
+import InboundOrdersPage from '../pages/InboundOrders';
 import UsersPage from '../pages/Users';
 import RolesPage from '../pages/Roles';
 import MenusPage from '../pages/Menus';
@@ -74,6 +75,10 @@ export const router = createBrowserRouter([
       {
         path: 'outbound-flows',
         element: <OutboundFlowsPage />,
+      },
+      {
+        path: 'inbound-orders',
+        element: <InboundOrdersPage />,
       },
       {
         path: 'system/users',

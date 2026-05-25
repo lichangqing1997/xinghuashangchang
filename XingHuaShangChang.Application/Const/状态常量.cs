@@ -64,3 +64,24 @@ public static class 商品类别
     public const string 配件 = "配件";
     public const string 其他 = "其他";
 }
+
+/// <summary>
+/// 入库单状态
+/// </summary>
+public static class 入库单状态
+{
+    public const string 未处理 = "未处理";
+    public const string 正在处理 = "正在处理";
+    public const string 已完成 = "已完成";
+    public const string 手动关闭 = "手动关闭";
+}
+
+/// <summary>
+/// 入库单审核状态
+/// </summary>
+public static class 入库单审核状态
+{
+    public const string 待审核 = "待审核";
+    public const string 已通过 = "已通过";
+    public const string 已驳回 = "已驳回";
+}
